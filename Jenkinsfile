@@ -4,6 +4,10 @@ pipeline {
     tools {
         nodejs "NodeJS" 
     }
+
+    environment {
+        RENDER_URL = 'https://gallery-rxej.onrender.com'
+    }
     
     stages {
         stage('Checkout') {
@@ -11,7 +15,20 @@ pipeline {
                 checkout scm
             }
         }
-        
+        stage('Test') {
+            steps {
+                sh 'npm test'
+            }
+            post {
+                failure {
+                    emailext (
+                        subject: "Build Failed",
+                        body: "The build has failed. Please check the console output.",
+                        to: "bnjeremy.ke@gmail.com"
+                    )
+                }
+            }
+        }  
         stage('Install Dependencies') {
             steps {
                 sh 'npm install'
@@ -20,16 +37,18 @@ pipeline {
         
         stage('Deploy to Render') {
             steps {
-                // Render deploys automatically on git push if connected
                 echo 'Deploying to Render...'
-                // You might need to trigger Render deployment via webhook
             }
         }
     }
     
     post {
-        always {
-            echo 'Pipeline completed'
+        success {
+            slackSend (
+                channel: '#jeremy_ip1',
+                color: 'good',
+                message: "✅ Deployment Successful!\nBuild ID: ${env.BUILD_NUMBER}\nWebsite: ${env.RENDER_URL}"
+            )
         }
     }
 }
