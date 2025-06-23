@@ -15,6 +15,13 @@ pipeline {
                 checkout scm
             }
         }
+
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm install'
+            }
+        }
+
         stage('Test') {
             steps {
                 sh 'npm test'
@@ -29,11 +36,6 @@ pipeline {
                 }
             }
         }  
-        stage('Install Dependencies') {
-            steps {
-                sh 'npm install'
-            }
-        }
         
         stage('Deploy to Render') {
             steps {
