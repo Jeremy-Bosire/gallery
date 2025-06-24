@@ -8,6 +8,10 @@ pipeline {
     environment {
         RENDER_URL = 'https://gallery-rxej.onrender.com'
     }
+
+    triggers {
+        githubPush()
+    }
     
     stages {
         stage('Checkout') {
