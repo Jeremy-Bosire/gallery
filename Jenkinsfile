@@ -30,15 +30,6 @@ pipeline {
             steps {
                 sh 'npm test'
             }
-            post {
-                failure {
-                    emailext (
-                        subject: "Build Failed",
-                        body: "The build has failed. Please check the console output.",
-                        to: "bnjeremy.ke@gmail.com"
-                    )
-                }
-            }
         }  
         
         stage('Deploy to Render') {
